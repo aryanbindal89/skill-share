@@ -11,13 +11,23 @@ A peer-learning community for sharing skills, building practical study plans, an
 ![Django](https://img.shields.io/badge/Django-6-092E20?logo=django&logoColor=white)
 ![DRF](https://img.shields.io/badge/API-Django_REST-A30000?logo=django&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
-![License](https://img.shields.io/badge/Status-Local_demo-FF8A65)
+![Demo status](https://img.shields.io/badge/Status-Local_demo-FF8A65)
 
 **Explore · Connect · Learn · Grow**
 
-[Get started](#-quick-start) · [Study flow](#-the-study-flow) · [Features](#-what-you-can-do) · [Routes](#-pages-and-routes) · [API](#-api-at-a-glance)
+[Get started](#-quick-start) · [Website preview](#-website-preview) · [Study flow](#-the-study-flow) · [Features](#-what-you-can-do) · [Routes](#-pages-and-routes) · [API](#-api-at-a-glance)
 
 </div>
+
+---
+
+## 🖼️ Website preview
+
+<p align="center">
+  <img src="docs/assets/skillshare-home.png" alt="SkillShare homepage showing its 3D learning map and navigation" width="100%">
+</p>
+
+<p align="center"><em>Explore skills, build a roadmap, and grow together.</em></p>
 
 ---
 
