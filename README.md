@@ -1,121 +1,206 @@
-# SkillShare
+<div align="center">
 
-**Learn together. Grow together.** A peer learning community and personal roadmap builder by **HACKER_RUN**.
+# ✨ SkillShare
 
-SkillShare is a full-stack React and Django application. Students can opt into a public learner directory, share skills, request and schedule peer sessions, build and save learning roadmaps, and record their progress. The 3D learning map on the home page is rendered with Three.js through React Three Fiber.
+### Learn together. Grow together.
 
-## What works
+A peer-learning community for sharing skills, building practical study plans, and making progress with other learners.
 
-- Session-based account registration, email-or-username login, logout, CSRF protection, password validation, and Django password hashing.
-- Private-by-default profiles. A learner chooses whether to appear publicly, then can maintain a bio, skills to share or learn, interests, experience, and preferred learning formats.
-- Searchable skill catalog, category filters, learner discovery, experience and teaching/learning filters, and paginated results.
-- Learning requests with topic, note, and suggested future time. The recipient can accept or decline; the sender can cancel a pending request; participants can record attendance after the agreed time.
-- Roadmap generation through a configurable OpenAI-compatible chat completions endpoint. With no key or when the provider is unavailable, a deterministic local fallback still creates a usable plan. Roadmaps and task completion persist in Django.
-- Progress derived from completed roadmap tasks, learner-recorded practice, and session attendance. No demo statistics are shown as a user's real activity.
-- Dark and light themes across routes, stored in local storage and initialized from the operating system preference.
-- Responsive routes, keyboard-accessible controls, reduced-motion handling, animated transitions, loading/error/empty states, and a WebGL loading fallback.
-- Django admin for the main models. An optional management command creates clearly labeled demo learner profiles; none are created automatically.
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=111827)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6-092E20?logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/API-Django_REST-A30000?logo=django&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![License](https://img.shields.io/badge/Status-Local_demo-FF8A65)
 
-Sessions coordinate a topic and a time; SkillShare does not host video calls. Roadmap items are recommendations and do not guarantee a particular outcome.
+**Explore · Connect · Learn · Grow**
 
-## Run locally
+[Get started](#-quick-start) · [Study flow](#-the-study-flow) · [Features](#-what-you-can-do) · [Routes](#-pages-and-routes) · [API](#-api-at-a-glance)
 
-Use Python 3.12 or later and Node.js 20 or later. SQLite is included with Python; no paid API or external database is required for the local demo.
+</div>
 
-### 1. Install and configure Django
+---
 
-From the repository root, in PowerShell:
+## 🌈 Welcome to your learning space
+
+**SkillShare** is a full-stack learning app by **HACKER_RUN**. Learners can explore a shared skill catalog, choose whether to appear in the community directory, request peer sessions, create AI-assisted roadmaps, and track their own progress.
+
+The home page includes an interactive 3D learning map built with Three.js, React Three Fiber, and Drei. The rest of the experience works without a paid AI key or a WebGL-capable browser.
+
+## 🧭 The study flow
+
+```mermaid
+flowchart LR
+    A([🎯 Choose a goal]) --> B{How would you like to learn?}
+    B -->|Build a plan| C[✨ Generate a roadmap]
+    B -->|Learn with a peer| D[🔎 Explore skills]
+    C --> E[🪜 Work through roadmap tasks]
+    D --> F[👋 Find an opted-in learner]
+    F --> G[✉️ Request a session with a topic and time]
+    G --> H{Peer response}
+    H -->|Declines| D
+    H -->|Accepts| I[📅 Session appears in Sessions]
+    I --> J[🤝 Study together at the agreed time]
+    J --> K[✅ Record attendance]
+    E --> L[📝 Log practice]
+    K --> M[📈 Dashboard and progress update]
+    L --> M
+    M --> N([🌱 Choose your next step])
+    N --> B
+
+    classDef goal fill:#FFD166,stroke:#D99400,color:#26221B,stroke-width:2px
+    classDef choose fill:#FFF1B8,stroke:#C79B26,color:#342D16,stroke-width:2px
+    classDef plan fill:#D8C5FF,stroke:#8C68D9,color:#251B38,stroke-width:2px
+    classDef explore fill:#A8DADC,stroke:#42979B,color:#142B2B,stroke-width:2px
+    classDef connect fill:#FFB4A2,stroke:#D66F5B,color:#321C17,stroke-width:2px
+    classDef learn fill:#BDE0FE,stroke:#5A9AD0,color:#14283B,stroke-width:2px
+    classDef progress fill:#C7F9CC,stroke:#56A764,color:#17321C,stroke-width:2px
+    class A,N goal
+    class B choose
+    class C,E plan
+    class D explore
+    class F,G,H,I connect
+    class J,K,L learn
+    class M progress
+```
+
+> **Peer sessions:** SkillShare records requests, topics, suggested times, responses, and attendance. Learners meet using their own preferred tools; the app does not currently provide built-in real-time chat or video calls.
+
+## 🎨 What you can do
+
+| | Feature | What it does |
+|---|---|---|
+| 🧭 | **Explore skills** | Search the catalog and filter by category. |
+| 👥 | **Meet learners** | Find public profiles by skill, learning direction, and experience. Profiles stay private until their owner opts in. |
+| 🤝 | **Request a peer session** | Suggest a topic and future time; the recipient can accept or decline, and the sender can cancel a pending request. |
+| 🗺️ | **Build a roadmap** | Generate a structured learning path and save tasks to your account. A deterministic local fallback works without an AI key. |
+| ✅ | **Track progress** | See completed roadmap tasks, recorded practice, session attendance, and your learning streak. |
+| 🎛️ | **Make it yours** | Switch between dark and light themes. The interface is responsive, keyboard-accessible, and honors reduced-motion settings. |
+| 🪄 | **Enjoy the details** | Explore the 3D home-page map, animated page transitions, dashboard ambience, and site-wide desktop cursor treatment. |
+
+### 🔐 Privacy and account basics
+
+- Registration, sign-in, and sign-out use Django sessions and CSRF protection.
+- Passwords are validated and hashed by Django.
+- Learner profiles are private by default. Email and contact details are never shown in the public directory.
+- Demo accounts are created only when you run the optional seed command; none are added automatically.
+
+## ⚡ Quick start
+
+### Requirements
+
+- Python **3.12+**
+- Node.js **20+**
+- SQLite (included with Python) or an optional PostgreSQL database
+
+No paid API key is needed to run the local app.
+
+### 1. Set up Django
+
+Open PowerShell in the project root (`D:\Hackton`):
 
 ```powershell
 py -3 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-Copy-Item backend\.env.example backend\.env
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+if (!(Test-Path backend\.env)) { Copy-Item backend\.env.example backend\.env }
+.\.venv\Scripts\python.exe backend\manage.py migrate
+.\.venv\Scripts\python.exe backend\manage.py runserver 8000
 ```
 
-The example file runs in local development with SQLite and no AI credential. Edit `backend\.env` only if you want provider-backed roadmap suggestions. Keep real credentials in that ignored file or environment variables; do not put them in source files.
+Keep this terminal open. The example environment uses SQLite and no AI credential. Edit `backend\.env` only if you want provider-backed roadmap suggestions; keep real credentials out of source files.
 
-```powershell
-python backend\manage.py migrate
-python backend\manage.py runserver 8000
-```
+### 2. Start the frontend
 
-### 2. Install and start the frontend
-
-Open a second terminal at the repository root:
+Open a second PowerShell terminal in `D:\Hackton`:
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Open the Vite URL printed by npm (normally `http://localhost:5173`). Vite proxies `/api` and `/admin` to Django on port 8000, so browser requests use the same origin and Django session cookies.
+Open **http://localhost:5173**. Vite proxies `/api` and `/admin` to Django on port `8000`, so the frontend and API share an origin for session cookies.
 
-### Optional demo accounts
+### 🌱 Optional: add sample learners
 
-The default database contains a starter skills catalog but no fabricated student accounts. To populate the learner directory with four clearly labeled sample profiles, run this explicitly after migrations:
+The default database includes a starter skill catalog and no fabricated learner accounts. To populate the learner directory with four clearly marked demo profiles, run this once after migrations:
 
 ```powershell
-python backend\manage.py seed_demo --password "Choose-A-Unique-Demo-Password"
+.\.venv\Scripts\python.exe backend\manage.py seed_demo --password "Choose-A-Unique-Local-Demo-Password"
 ```
 
-The command creates `demo_mentor`, `demo_designer`, `demo_builder`, and `demo_learner`, each visibly labeled as a demo learner and using reserved `.invalid` email addresses. Use the password you supplied. Run it only in a demo database, never against production accounts.
+This creates `demo_mentor`, `demo_designer`, `demo_builder`, and `demo_learner`, using reserved `.invalid` email addresses. Use a local-only password you do not use anywhere else. Run the command only in a demo database.
 
-### Admin account
+### 🛠️ Optional: Django admin
 
-To manage records in Django admin, create your own administrator:
+Create an administrator from the project root:
 
 ```powershell
-python backend\manage.py createsuperuser
+.\.venv\Scripts\python.exe backend\manage.py createsuperuser
 ```
 
-Then visit `http://localhost:8000/admin/`.
+Then visit **http://localhost:8000/admin/**.
 
-## AI roadmap settings
+## 🧪 Checks and useful commands
 
-The backend reads `AI_API_KEY`, `AI_BASE_URL`, and `AI_MODEL` from environment variables or `backend/.env`. The default URL is the OpenAI-compatible chat completions endpoint. Credentials remain on the backend. When no credential is set, provider requests fail, or the response cannot be parsed, SkillShare creates a structured deterministic roadmap locally and marks it as a local recommendation.
-
-## Database options
-
-SQLite is the default. PostgreSQL can be selected with `DB_ENGINE=postgresql` and `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_PORT`; the PostgreSQL driver is included in `requirements.txt`. Run the same Django migrations against the chosen database.
-
-## Useful commands
+Run these from the project root:
 
 ```powershell
-python backend\manage.py check
-python backend\manage.py test core
-npm run build
+.\.venv\Scripts\python.exe backend\manage.py check
+.\.venv\Scripts\python.exe backend\manage.py test core
+.\.venv\Scripts\python.exe backend\manage.py makemigrations --check --dry-run
 npm run lint
+npm run build
 ```
 
-`npm run backend`, `npm run migrate`, and `npm run test:backend` are also available from an activated Python virtual environment.
+The root npm scripts `npm run backend`, `npm run migrate`, and `npm run test:backend` are also available when the Python virtual environment is activated.
 
-## Routes
+## 🗺️ Pages and routes
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Home and interactive 3D skill map |
+| Route | Page |
+|---|---|
+| `/` | Welcome page and interactive 3D skill map |
 | `/explore` | Search and filter the skill catalog |
-| `/students` | Browse opted-in learner profiles |
-| `/students/:id` | Public learner details and session request form |
-| `/register`, `/login` | Account creation and sign-in |
-| `/setup`, `/profile` | Profile, skills, interests, learning formats, and visibility |
-| `/dashboard` | Personal overview, roadmap, skills, and sessions |
-| `/roadmaps/new` | Build and save a learning roadmap |
-| `/roadmaps/:id` | Reopen a roadmap, edit its details, and track tasks |
-| `/sessions` | Incoming/outgoing requests, confirmed sessions, attendance |
-| `/progress` | Recorded learning activity and roadmap progress |
-| `/about` | Product mission and HACKER_RUN team |
+| `/students` | Browse learners who opted into the directory |
+| `/students/:id` | Learner profile and session request form |
+| `/register` · `/login` | Create an account or sign in |
+| `/setup` · `/profile` | Set profile details, skills, interests, learning formats, and visibility |
+| `/dashboard` | Learning overview, roadmap, skills, and sessions |
+| `/roadmaps/new` | Create a learning roadmap |
+| `/roadmaps/:id` | Review a roadmap and update task completion |
+| `/sessions` | Incoming and outgoing requests, scheduled sessions, and attendance |
+| `/progress` | Recorded practice and roadmap progress |
+| `/about` | About SkillShare and HACKER_RUN |
 
-## API outline
+## 🔌 API at a glance
 
-- `POST /api/auth/register/`, `POST /api/auth/login/`, `POST /api/auth/logout/`, `GET /api/auth/me/`
-- `GET/PATCH /api/profile/me/`
-- `GET /api/skills/`, `GET /api/skills/categories/`, `GET /api/students/`, `GET /api/students/<user_id>/`
-- `GET/POST /api/learning-requests/`, `PATCH /api/learning-requests/<id>/`, `GET /api/sessions/`
-- `GET /api/roadmaps/`, `POST /api/roadmaps/generate/`, `GET/PATCH/DELETE /api/roadmaps/<id>/`, `PATCH /api/roadmaps/<id>/tasks/<task_id>/`
-- `GET /api/progress/`, `POST /api/progress/practice/`
+- **Accounts:** `POST /api/auth/register/`, `POST /api/auth/login/`, `POST /api/auth/logout/`, `GET /api/auth/me/`
+- **Profile:** `GET/PATCH /api/profile/me/`
+- **Catalog:** `GET /api/skills/`, `GET /api/skills/categories/`
+- **Learners:** `GET /api/students/`, `GET /api/students/<user_id>/`
+- **Peer sessions:** `GET/POST /api/learning-requests/`, `PATCH /api/learning-requests/<id>/`, `GET /api/sessions/`
+- **Roadmaps:** `GET /api/roadmaps/`, `POST /api/roadmaps/generate/`, `GET/PATCH/DELETE /api/roadmaps/<id>/`, `PATCH /api/roadmaps/<id>/tasks/<task_id>/`
+- **Progress:** `GET /api/progress/`, `POST /api/progress/practice/`
 
-## Before production
+## 🧠 AI roadmap configuration
 
-Set a unique `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=false`, correct `DJANGO_ALLOWED_HOSTS`, `DJANGO_CORS_ALLOWED_ORIGINS`, and `DJANGO_CSRF_TRUSTED_ORIGINS`; serve over HTTPS; configure a supported production database and backups; and deploy the Vite build behind a web server with `/api` and `/admin` routed to Django. Production cookie security flags are enabled when debug is off. This demo does not include email verification, password reset, hosted video, or a production deployment pipeline.
+The backend reads `AI_API_KEY`, `AI_BASE_URL`, and `AI_MODEL` from environment variables or `backend/.env`. The default base URL is an OpenAI-compatible chat-completions endpoint. Credentials stay on the backend.
+
+If no key is configured, the provider is unavailable, or its response cannot be parsed, SkillShare builds a structured deterministic roadmap locally and marks it as a local recommendation.
+
+## 🗄️ Database options
+
+SQLite is the default. To use PostgreSQL, set `DB_ENGINE=postgresql` plus `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_PORT`. The PostgreSQL driver is included in `requirements.txt`; run the same Django migrations against the chosen database.
+
+## 🚀 Before production
+
+This repository is configured for local development. Before deploying, set a unique `DJANGO_SECRET_KEY`, set `DJANGO_DEBUG=false`, configure `DJANGO_ALLOWED_HOSTS`, `DJANGO_CORS_ALLOWED_ORIGINS`, and `DJANGO_CSRF_TRUSTED_ORIGINS`, serve over HTTPS, and configure a supported production database with backups. Build the Vite frontend and route `/api` and `/admin` through your production web server.
+
+Production cookie security flags are enabled when debug is off. This demo does not include email verification, password reset, hosted video, built-in real-time messaging, or a production deployment pipeline. Roadmap suggestions are learning recommendations and do not guarantee a particular outcome.
+
+---
+
+<div align="center">
+
+**Made for curious minds, by HACKER_RUN.** 🌱✨🎨
+
+</div>
