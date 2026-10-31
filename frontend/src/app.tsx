@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { ProductShell, PublicCatalogShell, Loading, PageMotion } from './components/ui'
+import { MobileNavigationProvider, ProductShell, PublicCatalogShell, Loading, PageMotion } from './components/ui'
 
 const Landing = lazy(() => import('./pages/landing'))
 const AuthPage = lazy(() => import('./pages/auth'))
@@ -104,7 +104,7 @@ function SiteCursor() {
 }
 export default function App() {
   const location = useLocation()
-  return <><ScrollReset /><SiteCursor /><Suspense fallback={<Loading label="Opening your learning space…" />}><AnimatePresence mode="wait"><Routes location={location} key={location.pathname}>
+  return <MobileNavigationProvider><ScrollReset /><SiteCursor /><Suspense fallback={<Loading label="Opening your learning space…" />}><AnimatePresence mode="wait"><Routes location={location} key={location.pathname}>
     <Route path="/" element={<PageMotion><Landing /></PageMotion>} />
     <Route path="/login" element={<PageMotion><AuthPage mode="login" /></PageMotion>} />
     <Route path="/register" element={<PageMotion><AuthPage mode="register" /></PageMotion>} />
@@ -125,5 +125,5 @@ export default function App() {
       <Route path="/profile" element={<PageMotion><ProfilePage /></PageMotion>} />
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />
-  </Routes></AnimatePresence></Suspense></>
+  </Routes></AnimatePresence></Suspense></MobileNavigationProvider>
 }

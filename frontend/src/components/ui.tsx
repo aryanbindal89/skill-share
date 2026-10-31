@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, Bell, BookOpen, Compass, GraduationCap, House, Layers3, LogOut, Menu, Moon, Search, Sun, UsersRound, X } from 'lucide-react'
@@ -15,6 +15,20 @@ export function ThemeToggle() {
   return <button className="icon-button theme-toggle" onClick={toggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</button>
 }
 
+type MobileNavigationState = { open: boolean; setOpen: (open: boolean) => void }
+const MobileNavigationContext = createContext<MobileNavigationState | null>(null)
+
+export function MobileNavigationProvider({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false)
+  return <MobileNavigationContext.Provider value={{ open, setOpen }}>{children}</MobileNavigationContext.Provider>
+}
+
+function useMobileNavigation() {
+  const context = useContext(MobileNavigationContext)
+  if (!context) throw new Error('Mobile navigation must be used inside MobileNavigationProvider.')
+  return context
+}
+
 const primaryLinks = [
   { to: '/dashboard', label: 'Home', icon: House },
   { to: '/explore', label: 'Explore skills', icon: Compass },
@@ -28,8 +42,8 @@ const learningLinks = [
 
 export function PublicHeader() {
   const { user } = useAuth()
-  const [open, setOpen] = useState(false)
-  return <header className="public-header"><div className="public-header-inner"><Brand /><nav className={`public-links ${open ? 'open' : ''}`} aria-label="Main navigation"><Link to="/" onClick={() => setOpen(false)}>Home</Link><a href="/#how" onClick={() => setOpen(false)}>How it works</a><Link to="/explore" onClick={() => setOpen(false)}>Explore skills</Link><Link to="/students" onClick={() => setOpen(false)}>Find a learner</Link><Link to="/about" onClick={() => setOpen(false)}>About us</Link></nav><div className="header-actions"><ThemeToggle />{user ? <Link className="button button-small button-primary" to="/dashboard">My learning space <ArrowUpRight size={15} /></Link> : <><Link className="button button-small button-ghost login-link" to="/login">Log in</Link><Link className="button button-small button-primary" to="/register">Create account <ArrowUpRight size={15} /></Link></>}<button className="mobile-menu icon-button" onClick={() => setOpen((x) => !x)} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X size={19} /> : <Menu size={19} />}</button></div></div></header>
+  const { open, setOpen } = useMobileNavigation()
+  return <header className="public-header"><div className="public-header-inner"><Brand /><nav className={`public-links ${open ? 'open' : ''}`} aria-label="Main navigation"><Link to="/">Home</Link><a href="/#how">How it works</a><Link to="/explore">Explore skills</Link><Link to="/students">Find a learner</Link><Link to="/about">About us</Link></nav><div className="header-actions"><ThemeToggle />{user ? <Link className="button button-small button-primary" to="/dashboard">My learning space <ArrowUpRight size={15} /></Link> : <><Link className="button button-small button-ghost login-link" to="/login">Log in</Link><Link className="button button-small button-primary" to="/register">Create account <ArrowUpRight size={15} /></Link></>}<button className="mobile-menu icon-button" onClick={() => setOpen(!open)} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X size={19} /> : <Menu size={19} />}</button></div></div></header>
 }
 
 export function PublicCatalogShell() {
@@ -42,8 +56,7 @@ export function ProductShell() {
   const { user, logout } = useAuth()
   const toast = useToast()
   const location = useLocation()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  useEffect(() => setMobileOpen(false), [location.pathname])
+  const { open: mobileOpen, setOpen: setMobileOpen } = useMobileNavigation()
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace />
   const handleLogout = async () => { await logout(); toast('You’re signed out.'); }
   return <div className="product-shell">
