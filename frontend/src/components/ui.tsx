@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight, Bell, BookOpen, ChevronDown, CircleUserRound, Compass, GraduationCap, House, Layers3, LogOut, Menu, Moon, Search, Sun, UsersRound, X } from 'lucide-react'
+import { ArrowUpRight, Bell, BookOpen, Compass, GraduationCap, House, Layers3, LogOut, Menu, Moon, Search, Sun, UsersRound, X } from 'lucide-react'
 import { useAuth } from '../state/auth'
 import { useTheme } from '../state/theme'
 import { useToast } from '../state/toast'
@@ -15,22 +15,26 @@ export function ThemeToggle() {
   return <button className="icon-button theme-toggle" onClick={toggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</button>
 }
 
-const links = [
-  { to: '/dashboard', label: 'Overview', icon: House },
+const primaryLinks = [
+  { to: '/dashboard', label: 'Home', icon: House },
   { to: '/explore', label: 'Explore skills', icon: Compass },
-  { to: '/students', label: 'Find learners', icon: UsersRound },
-  { to: '/roadmaps/new', label: 'AI roadmap', icon: Layers3 },
+  { to: '/students', label: 'Find a learner', icon: UsersRound },
   { to: '/sessions', label: 'Sessions', icon: Bell },
-  { to: '/progress', label: 'My progress', icon: GraduationCap },
+]
+const learningLinks = [
+  { to: '/roadmaps/new', label: 'Learning plan', icon: Layers3 },
+  { to: '/progress', label: 'Progress', icon: GraduationCap },
 ]
 
 export function PublicHeader() {
   const { user } = useAuth()
   const [open, setOpen] = useState(false)
-  return <header className="public-header"><div className="public-header-inner"><Brand /><nav className={`public-links ${open ? 'open' : ''}`} aria-label="Main navigation"><Link to="/" onClick={() => setOpen(false)}>Home</Link><a href="/#how" onClick={() => setOpen(false)}>How it works</a><Link to="/explore" onClick={() => setOpen(false)}>Explore skills</Link><Link to="/students" onClick={() => setOpen(false)}>Find learners</Link><Link to="/roadmaps/new" onClick={() => setOpen(false)}>AI Roadmap</Link><Link to="/about" onClick={() => setOpen(false)}>About us</Link></nav><div className="header-actions"><ThemeToggle />{user ? <Link className="button button-small button-primary" to="/dashboard">Go to dashboard <ArrowUpRight size={15} /></Link> : <><Link className="button button-small button-ghost login-link" to="/login">Log in</Link><Link className="button button-small button-primary" to="/register">Join the community <ArrowUpRight size={15} /></Link></>}<button className="mobile-menu icon-button" onClick={() => setOpen((x) => !x)} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X size={19} /> : <Menu size={19} />}</button></div></div></header>
+  return <header className="public-header"><div className="public-header-inner"><Brand /><nav className={`public-links ${open ? 'open' : ''}`} aria-label="Main navigation"><Link to="/" onClick={() => setOpen(false)}>Home</Link><a href="/#how" onClick={() => setOpen(false)}>How it works</a><Link to="/explore" onClick={() => setOpen(false)}>Explore skills</Link><Link to="/students" onClick={() => setOpen(false)}>Find a learner</Link><Link to="/about" onClick={() => setOpen(false)}>About us</Link></nav><div className="header-actions"><ThemeToggle />{user ? <Link className="button button-small button-primary" to="/dashboard">My learning space <ArrowUpRight size={15} /></Link> : <><Link className="button button-small button-ghost login-link" to="/login">Log in</Link><Link className="button button-small button-primary" to="/register">Create account <ArrowUpRight size={15} /></Link></>}<button className="mobile-menu icon-button" onClick={() => setOpen((x) => !x)} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X size={19} /> : <Menu size={19} />}</button></div></div></header>
 }
 
 export function PublicCatalogShell() {
+  const { user } = useAuth()
+  if (user) return <ProductShell />
   return <div className="public-catalog-shell"><PublicHeader /><main className="public-catalog-main"><Outlet /></main><footer className="marketing-footer"><Brand small /><span>Learn together. Grow together.</span><div><Link to="/about">About</Link><Link to="/">Home</Link><Link to="/explore">Explore</Link></div><small>© 2026 HACKER_RUN</small></footer></div>
 }
 
@@ -45,15 +49,24 @@ export function ProductShell() {
   return <div className="product-shell">
     <aside className={`sidebar ${mobileOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-brand"><Brand /><button className="mobile-menu icon-button" onClick={() => setMobileOpen(false)} aria-label="Close menu"><X size={18} /></button></div>
-      <div className="sidebar-label">YOUR SPACE</div>
-      <nav className="side-nav" aria-label="Workspace navigation">{links.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{label === 'AI roadmap' && <span className="side-new">NEW</span>}</NavLink>)}</nav>
+      <nav className="side-nav" aria-label="Workspace navigation">
+        <div className="sidebar-label">START HERE</div>
+        {primaryLinks.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}><Icon size={17} strokeWidth={1.8} /><span>{label}</span></NavLink>)}
+        <div className="sidebar-label sidebar-label-secondary">YOUR LEARNING</div>
+        {learningLinks.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={({ isActive }) => `side-link ${isActive || (to === '/roadmaps/new' && location.pathname.startsWith('/roadmaps/')) ? 'active' : ''}`}><Icon size={17} strokeWidth={1.8} /><span>{label}</span></NavLink>)}
+      </nav>
       <div className="sidebar-spacer" />
       <div className="sidebar-tip"><div className="tip-orbit"><BookOpen size={18} /></div><p>Small steps make<br />big things happen.</p><span>Your next chapter starts today.</span></div>
-      <NavLink to="/about" className={({ isActive }) => `side-link sidebar-about ${isActive ? 'active' : ''}`}><CircleUserRound size={17} />About SkillShare</NavLink>
       <div className="sidebar-user"><div className="avatar avatar-sm">{(user.username[0] || 'S').toUpperCase()}</div><div className="sidebar-user-text"><strong>{user.username}</strong><span>Learning member</span></div><button className="icon-button logout-button" onClick={handleLogout} title="Sign out" aria-label="Sign out"><LogOut size={16} /></button></div>
     </aside>
     {mobileOpen && <button className="sidebar-scrim" onClick={() => setMobileOpen(false)} aria-label="Close navigation" />}
-    <div className="main-column"><header className="app-header"><button className="mobile-menu icon-button" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu size={19} /></button><div className="app-crumb"><span>Workspace</span><span className="crumb-slash">/</span><strong>{links.find((item) => item.to === location.pathname)?.label || (location.pathname.startsWith('/profile') ? 'Your profile' : location.pathname.startsWith('/roadmaps/') ? 'Roadmap' : location.pathname.startsWith('/students/') ? 'Learner profile' : location.pathname.startsWith('/requests') ? 'Learning requests' : 'SkillShare')}</strong></div><div className="app-header-actions"><Link to="/explore" className="quick-search"><Search size={15} /><span>Find a skill</span><kbd>⌘ K</kbd></Link><ThemeToggle /><Link to="/profile" className="avatar avatar-button" aria-label="Open your profile">{(user.username[0] || 'S').toUpperCase()}</Link></div></header><main className="product-main"><Outlet /></main><footer className="app-footer"><span>Make learning a team sport.</span><Link to="/about">About SkillShare <ArrowUpRight size={13} /></Link></footer></div>
+    <div className="main-column"><header className="app-header"><button className="mobile-menu icon-button" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu size={19} /></button><div className="app-crumb"><span>My space</span><span className="crumb-slash">/</span><strong>{[...primaryLinks, ...learningLinks].find((item) => item.to === location.pathname)?.label || (location.pathname.startsWith('/profile') ? 'Your profile' : location.pathname.startsWith('/roadmaps/') ? 'Your learning plan' : location.pathname.startsWith('/students/') ? 'Learner profile' : location.pathname.startsWith('/requests') ? 'Sessions' : 'SkillShare')}</strong></div><div className="app-header-actions"><Link to="/explore" className="quick-search" aria-label="Browse skills"><Search size={15} /><span>Find a skill</span></Link><ThemeToggle /><Link to="/profile" className="avatar avatar-button" aria-label="Open your profile and settings" title="Profile and settings">{(user.username[0] || 'S').toUpperCase()}</Link></div></header><main className="product-main"><Outlet /></main><footer className="app-footer"><span>Make learning a team sport.</span><Link to="/about">About SkillShare <ArrowUpRight size={13} /></Link></footer></div>
+    <nav className="mobile-tabbar" aria-label="Quick navigation">
+      <NavLink to="/dashboard" end className={({ isActive }) => `mobile-tab ${isActive ? 'active' : ''}`}><House size={19} /><span>Home</span></NavLink>
+      <NavLink to="/explore" className={({ isActive }) => `mobile-tab ${isActive ? 'active' : ''}`}><Compass size={19} /><span>Explore</span></NavLink>
+      <NavLink to="/students" className={({ isActive }) => `mobile-tab ${isActive ? 'active' : ''}`}><UsersRound size={19} /><span>People</span></NavLink>
+      <NavLink to="/sessions" className={({ isActive }) => `mobile-tab ${isActive ? 'active' : ''}`}><Bell size={19} /><span>Sessions</span></NavLink>
+    </nav>
   </div>
 }
 
