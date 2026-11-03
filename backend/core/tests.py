@@ -35,6 +35,18 @@ class SkillShareApiTests(TestCase):
         self.assertTrue(Profile.objects.filter(user=user).exists())
         self.assertIn("sessionid", client.cookies)
 
+    def test_login_accepts_username_or_email(self):
+        password = "Difficult-local-password-2026!"
+        user = User.objects.create_user(username="login_test", email="login@example.test", password=password)
+
+        for identity in ("login_test", "login@example.test"):
+            client = APIClient()
+            response = client.post("/api/auth/login/", {"username": identity, "password": password}, format="json")
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data["username"], user.username)
+            self.assertEqual(int(client.session["_auth_user_id"]), user.id)
+
     def test_private_profiles_do_not_appear_until_owner_opts_in(self):
         hidden = User.objects.create_user(username="private_test", password="a-long-test-password-42")
         Profile.objects.create(user=hidden, display_name="Private learner", is_public=False)
